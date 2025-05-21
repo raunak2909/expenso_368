@@ -8,9 +8,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Image.asset(
-          'assets/images/splash image.png',
-          fit: BoxFit.contain,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Image.asset(
+            'assets/images/splash_image-logo.png',
+            fit: BoxFit.contain,
+          ),
         ),
         actions: [
           IconButton(
@@ -153,21 +156,59 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            // Expense List
             SizedBox(height: 20),
             const Text(
               'Expense List',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildExpenseItem('Shop', '-\$90'),
-                  _buildExpenseItem('Electronic', '-\$1290'),
-                  _buildExpenseItem('Transportation', '-\$60'),
-                ],
+            const SizedBox(height: 10),
+            // Expanded(
+            //   child: ListView(
+            //     children: [
+            //       _buildExpenseItem('Shop', '-\$90'),
+            //       _buildExpenseItem('Electronic', '-\$1290'),
+            //       _buildExpenseItem('Transportation', '-\$60'),
+            //     ],
+            //   ),
+            // ),
+            Container(
+              width: double.infinity,
+              height: 160,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Expanded(
+                child: ListView(
+                  children: [
+                    _buildExpenseItem('Shop', '-\$90'),
+                    _buildExpenseItem('Electronic', '-\$1290'),
+                    _buildExpenseItem('Transportation', '-\$60'),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            const Text(
+              'Income List',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              height: 160,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Expanded(
+                child: ListView(
+                  children: [
+                    _buildExpenseItem('Rent', '+\$90'),
+                    _buildExpenseItem('Sales', '+\$1290'),
+                    _buildExpenseItem('Business', '+\$60'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -180,7 +221,7 @@ class HomePage extends StatelessWidget {
             MaterialPageRoute(builder: (_) => FirstPage()),
           );
         },
-        child: Icon(Icons.add),
+        child: Icon(Icons.arrow_forward),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: const Color(0xFF7F6EFF),
@@ -198,10 +239,21 @@ class HomePage extends StatelessWidget {
 
   Widget _buildExpenseItem(String title, String amount) {
     return ListTile(
-      title: Text(title),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 15,
+          color: Colors.black87,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
       trailing: Text(
         amount,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: Color(0XFFE88DBE),
+        ),
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:expense_app/splash/splash_page.dart';
+import 'package:expense_app/ui/pages/splash/splash_page.dart';
 import 'package:expense_app/ui/features/auth/SignUpScreen.dart';
 import 'package:expense_app/ui/features/auth/WelcomeScreen.dart';
 import 'package:expense_app/ui/features/auth/login_screen.dart';

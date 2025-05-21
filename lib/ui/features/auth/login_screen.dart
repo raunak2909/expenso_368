@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 2), () {
       Navigator.pushNamed(context, AppRoutes.DASHBOARD_PAGE_ROUTE);
     });
   }
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       children: [
                         Image.asset(
-                          "assets/images/splash image.png",
+                          "assets/images/splash_image-logo.png",
                           height: 150,
                           width: 150,
                         ),
@@ -236,8 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
-                      backgroundColor: Color(0xFF7F6EFF),
-                      //backgroundColor: const Color.fromARGB(255, 3, 14, 4),
+                      backgroundColor: Colors.deepPurple,
                     ),
                     child: const Text(
                       "Sign in",

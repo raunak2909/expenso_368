@@ -38,7 +38,7 @@ class WelcomeScreen extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
-                minimumSize: const Size(200, 50),
+                minimumSize: const Size(400, 50),
               ),
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.LOGIN_PAGE_ROUTE);
@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
             OutlinedButton(
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.deepPurple),
-                minimumSize: const Size(200, 50),
+                minimumSize: const Size(400, 50),
               ),
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.SIGNUP_PAGE_ROUTE);
@@ -59,8 +59,11 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.deepPurple),
               ),
             ),
-            const SizedBox(height: 20),
-            const Text('Sign up using'),
+            const SizedBox(height: 30),
+            const Text(
+              'Sign up using',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
