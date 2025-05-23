@@ -4,6 +4,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'models/user_model.dart';
+
 class DBHelper {
   DBHelper._();
 
@@ -62,7 +64,23 @@ class DBHelper {
 
   ///events
   ///createUser
+  Future<bool> createUser({required UserModel user}) async{
+
+    var db = await initDB();
+
+    int rowsEffected = await db.insert(TABLE_USER, user.toMap());
+
+    return rowsEffected>0;
+  }
   ///checkIfUserAlreadyExists
+  Future<bool> checkIfUserAlreadyExists({required String email}) async{
+    var db = await initDB();
+
+    List<Map<String, dynamic>> mData = await db.query(TABLE_USER, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);
+
+    return mData.isNotEmpty;
+
+  }
   ///authenticateUser
   ///addExpense
   ///fetchAllExpense
