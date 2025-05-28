@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:expense_app/data/models/expense_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'models/user_model.dart';
@@ -35,7 +37,6 @@ class DBHelper {
   static const String COLUMN_EXP_CREATED_AT = "exp_created_at";
 
   Future<Database> initDB() async {
-
     mDB ??= await openDB();
     return mDB!;
     /*if(mDB==null){
@@ -44,7 +45,6 @@ class DBHelper {
     } else {
       return mDB!;
     }*/
-
   }
 
   Future<Database> openDB() async {
@@ -64,27 +64,92 @@ class DBHelper {
 
   ///events
   ///createUser
-  Future<bool> createUser({required UserModel user}) async{
-
+  Future<bool> createUser({required UserModel user}) async {
     var db = await initDB();
 
     int rowsEffected = await db.insert(TABLE_USER, user.toMap());
 
-    return rowsEffected>0;
+    return rowsEffected > 0;
   }
+
   ///checkIfUserAlreadyExists
-  Future<bool> checkIfUserAlreadyExists({required String email}) async{
+  Future<bool> checkIfUserAlreadyExists({required String email}) async {
     var db = await initDB();
 
-    List<Map<String, dynamic>> mData = await db.query(TABLE_USER, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);
+    List<Map<String, dynamic>> mData = await db
+        .query(TABLE_USER, where: "$COLUMN_USER_EMAIL = ?", whereArgs: [email]);
 
     return mData.isNotEmpty;
+  }
+
+  ///authenticateUser
+  Future<String> authenticateUser(
+      {required String email, required String pass}) async {
+    var db = await initDB();
+
+    List<Map<String, dynamic>> mData = await db.query(TABLE_USER,
+        where: "$COLUMN_USER_EMAIL = ?",
+        whereArgs: [email]);
+
+    if(mData.isNotEmpty){
+
+      List<Map<String, dynamic>> mData = await db.query(TABLE_USER,
+          where: "$COLUMN_USER_EMAIL = ? and $COLUMN_USER_PASS = ?",
+          whereArgs: [email, pass]);
+
+      if(mData.isNotEmpty){
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt("userId", mData[0][COLUMN_USER_ID]);
+
+        return "LoggedIn Successfully";
+
+      } else {
+        return "Incorrect Password";
+      }
+
+
+    } else {
+      return "Email not found";
+    }
+
+
 
   }
-  ///authenticateUser
+
   ///addExpense
+  Future<bool> addExpense({required ExpenseModel expense}) async {
+    var db = await initDB();
+
+    ///get userId from sharedPrefs
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt("userId")!;
+    expense.userId = userId;
+
+    int rowsEffected = await db.insert(TABLE_EXPENSE, expense.toMap());
+
+    return rowsEffected > 0;
+  }
+
   ///fetchAllExpense
+  Future<List<ExpenseModel>> fetchAllExpense() async {
+    var db = await initDB();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt("userId")!;
+
+    List<Map<String, dynamic>> mData = await db.query(TABLE_EXPENSE,
+        where: "$COLUMN_USER_ID = ?", whereArgs: [userId]);
+
+    List<ExpenseModel> allExp = [];
+
+    for (Map<String, dynamic> eachExp in mData) {
+      allExp.add(ExpenseModel.fromMap(eachExp));
+    }
+
+    return allExp;
+  }
+
   ///updateExpense
   ///deleteExpense
-
 }
