@@ -1,5 +1,6 @@
 import 'package:expense_app/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddExpensePage extends StatefulWidget {
   @override
@@ -14,6 +15,12 @@ class _AddExpensePageState extends State<AddExpensePage> {
   var amtController = TextEditingController();
 
   int selectedCatIndex = -1;
+
+  List<String> mExpType = ["Debit", "Credit"];
+  String selectedExpType = "Debit";
+
+  DateTime? selectedDate;
+  DateFormat df = DateFormat.yMMMEd();
 
   @override
   Widget build(BuildContext context) {
@@ -140,23 +147,48 @@ class _AddExpensePageState extends State<AddExpensePage> {
             SizedBox(
               height: 11,
             ),
-            SizedBox(
-              height: 50,
-              width: double.infinity,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: Colors.black,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(10))),
-                  onPressed: () {
+            /*DropdownButton(
+              value: selectedExpType,
+                items: mExpType.map((e){
+              return DropdownMenuItem(child: Text(e), value: e,);
+            }).toList(), onChanged: (value){
+                selectedExpType = value!;
+                setState(() {
 
+                });
+            }),*/
+            /*SizedBox(
+              width: double.infinity,
+              child: DropdownMenu(
+                textAlign: TextAlign.center,
+                width: double.infinity,
+                inputDecorationTheme: InputDecorationTheme(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                      width: 1,
+                    ),
+                  )
+                ),
+                initialSelection: selectedExpType,
+                  onSelected: (value){
+                  selectedExpType = value!;
                   },
-                  child: Text('Select Type')),
+                  dropdownMenuEntries: mExpType.map((e){
+                return DropdownMenuEntry(value: e, label:e);
+              }, ).toList()),
+            ),*/
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: mExpType.map((e){
+                return RadioMenuButton(value: e, groupValue: selectedExpType, onChanged: (value){
+                  selectedExpType = value!;
+                  setState(() {
+
+                  });
+                }, child: Text(e));
+              }).toList(),
             ),
             SizedBox(
               height: 11,
@@ -174,10 +206,19 @@ class _AddExpensePageState extends State<AddExpensePage> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.circular(10))),
-                  onPressed: () {
+                  onPressed: () async{
+
+                    selectedDate = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now().subtract(Duration(days: 183)),
+                        lastDate: DateTime.now());
+
+                    setState(() {
+
+                    });
 
                   },
-                  child: Text('Select Date')),
+                  child: Text(df.format((selectedDate ?? DateTime.now())))),
             ),
             SizedBox(
               height: 11,
@@ -192,6 +233,12 @@ class _AddExpensePageState extends State<AddExpensePage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                   onPressed: () {
+                    ///exp model
+                    ///bloc
+                    ///event
+                    ///state
+                    ///dbhelper
+
 
                   },
                   child: Text('Add Expense',)),
