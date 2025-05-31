@@ -16,7 +16,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
 
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, AppRoutes.ADD_EXPENSE_PAGE_ROUTE);
+      Navigator.pushReplacementNamed(context, AppRoutes.HOME_PAGE_ROUTE);
     });
   }
 

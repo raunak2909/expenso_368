@@ -1,13 +1,13 @@
 import '../exp_db_helper.dart';
 
 class ExpenseModel {
-  String? expId;
+  int? expId;
   int? userId;
   String expTitle;
   String expDesc;
   double expAmt;
   double expBal;
-  String expCatId;
+  int expCatId;
   int expType;
   String expCreatedAt;
 

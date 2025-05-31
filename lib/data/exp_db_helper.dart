@@ -122,9 +122,9 @@ class DBHelper {
     var db = await initDB();
 
     ///get userId from sharedPrefs
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    /*SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt("userId")!;
-    expense.userId = userId;
+    */expense.userId = 1;
 
     int rowsEffected = await db.insert(TABLE_EXPENSE, expense.toMap());
 
@@ -136,7 +136,7 @@ class DBHelper {
     var db = await initDB();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int userId = prefs.getInt("userId")!;
+    int userId = 1;
 
     List<Map<String, dynamic>> mData = await db.query(TABLE_EXPENSE,
         where: "$COLUMN_USER_ID = ?", whereArgs: [userId]);
