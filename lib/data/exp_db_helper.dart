@@ -139,7 +139,7 @@ class DBHelper {
     int userId = 1;
 
     List<Map<String, dynamic>> mData = await db.query(TABLE_EXPENSE,
-        where: "$COLUMN_USER_ID = ?", whereArgs: [userId]);
+        where: "$COLUMN_USER_ID = ?", whereArgs: [userId], orderBy: "$COLUMN_EXP_CREATED_AT DESC");
 
     List<ExpenseModel> allExp = [];
 

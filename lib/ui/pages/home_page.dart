@@ -1,12 +1,28 @@
+import 'dart:math';
+
+import 'package:expense_app/app_constants.dart';
 import 'package:expense_app/ui/pages/add_expense_page.dart';
 import 'package:expense_app/ui/pages/bloc/expense_bloc.dart';
+import 'package:expense_app/ui/pages/bloc/expense_event.dart';
 import 'package:expense_app/ui/pages/bloc/expense_state.dart';
 import 'package:expense_app/ui/pages/first_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ExpenseBloc>().add(GetInitialExpenseEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +235,13 @@ class HomePage extends StatelessWidget {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: allData[index].allExp.length,
                             itemBuilder: (_, childIndex){
-                              return _buildExpenseItem(allData[index].allExp[childIndex].expTitle, allData[index].allExp[childIndex].expDesc, allData[index].allExp[childIndex].expAmt.toString());
+                              return _buildExpenseItem(
+                                AppConstants.mCat.firstWhere((element){
+                                  return element["catId"] == allData[index].allExp[childIndex].expCatId;
+                                })["catImage"],
+                                  allData[index].allExp[childIndex].expTitle,
+                                  allData[index].allExp[childIndex].expDesc,
+                                  allData[index].allExp[childIndex].expAmt.toString());
                             },
                           ),
                         ],
@@ -259,8 +281,20 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildExpenseItem(String title, String desc, String amount) {
+  Widget _buildExpenseItem(String imgPath, String title, String desc, String amount) {
     return ListTile(
+      leading: Container(
+        height: 45,
+        width: 45,
+        padding: EdgeInsets.all(7),
+        child: Center(
+          child: Image.asset(imgPath),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100,
+          borderRadius: BorderRadius.circular(8),
+        )
+      ),
       title: Text(
         title,
         style: TextStyle(

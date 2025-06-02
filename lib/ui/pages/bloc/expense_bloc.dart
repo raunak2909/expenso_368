@@ -18,6 +18,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     ///date-wise
     ///uniqueDates
     DateFormat df = DateFormat.yMMMEd();
+    if(filterType==1){
+      df = DateFormat.yMMMEd();
+    } else if(filterType==2){
+      df = DateFormat.yMMM();
+    } else if(filterType==3){
+      df = DateFormat.y();
+    }
+
     List<String> uniquesDates = [];
 
     for (ExpenseModel eachExp in mExp) {
@@ -32,14 +40,14 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
 
     for (String eachDate in uniquesDates) {
       num bal = 0.0;
-      List<ExpenseModel> allExp = [];
+      List<ExpenseModel> eachDateExp = [];
 
       for (ExpenseModel eachExp in mExp) {
         String expDate = df.format(DateTime.fromMillisecondsSinceEpoch(
             int.parse(eachExp.expCreatedAt)));
 
         if (eachDate == expDate) {
-          allExp.add(eachExp);
+          eachDateExp.add(eachExp);
 
           if (eachExp.expType == 1) {
             bal -= eachExp.expAmt;
@@ -49,10 +57,10 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         }
       }
 
-      print("$eachDate: $bal, ${allExp.length}");
+      print("$eachDate: $bal, ${eachDateExp.length}");
 
       filteredExp
-          .add(FilteredExpModel(title: eachDate, bal: bal, allExp: allExp));
+          .add(FilteredExpModel(title: eachDate, bal: bal, allExp: eachDateExp));
     }
 
     return filteredExp;
@@ -67,10 +75,19 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
       if (check) {
         var allExp = await dbHelper.fetchAllExpense();
 
-        emit(LoadedExpenseState(mExpenses: filterExpense(mExp: allExp)));
+        emit(LoadedExpenseState(mExpenses: filterExpense(mExp: allExp, filterType: 1)));
       } else {
         emit(ErrorExpenseState(errorMsg: "Expense not added"));
       }
+    });
+
+
+    on<GetInitialExpenseEvent>((event, emit) async {
+      emit(LoadingExpenseState());
+
+        var allExp = await dbHelper.fetchAllExpense();
+
+        emit(LoadedExpenseState(mExpenses: filterExpense(mExp: allExp, filterType: 1)));
     });
   }
 }

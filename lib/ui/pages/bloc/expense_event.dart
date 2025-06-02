@@ -6,3 +6,5 @@ class AddExpenseEvent extends ExpenseEvent{
   ExpenseModel mExpense;
   AddExpenseEvent({required this.mExpense});
 }
+
+class GetInitialExpenseEvent extends ExpenseEvent{}
