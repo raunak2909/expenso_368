@@ -17,7 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  List<String> filterType = ["Date wise", "Month wise", "Year wise", "Cat wise"];
+  String selectedFilterType = "Date wise";
   @override
   void initState() {
     super.initState();
@@ -47,21 +48,20 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: false,
       ),
-      body: BlocBuilder<ExpenseBloc, ExpenseState>(builder: (_ ,state){
-
-        if(state is LoadingExpenseState){
+      body: BlocBuilder<ExpenseBloc, ExpenseState>(builder: (_, state) {
+        if (state is LoadingExpenseState) {
           return Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        if(state is ErrorExpenseState){
+        if (state is ErrorExpenseState) {
           return Center(
             child: Text(state.errorMsg),
           );
         }
 
-        if(state is LoadedExpenseState){
+        if (state is LoadedExpenseState) {
           print(state.mExpenses.length);
 
           var allData = state.mExpenses;
@@ -105,26 +105,49 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
+                      Expanded(child: Container()),
                       Container(
-                        margin: const EdgeInsets.only(left: 150),
+                        width: 150,
                         decoration: BoxDecoration(
-                          color: Color(0XFFEFF1FD),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              Text(
-                                "This Month",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_downward_outlined),
-                            ],
+                          child: SizedBox(
+                            child: DropdownMenu(
+                              textStyle: TextStyle(fontSize: 14),
+                                textAlign: TextAlign.center,
+                                inputDecorationTheme: InputDecorationTheme(
+                                    enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                    width: 1,
+                                  ),
+                                )),
+                                initialSelection: selectedFilterType,
+                                onSelected: (value) {
+                                  selectedFilterType = value!;
+
+                                  int filterValue = 1;
+                                  if(selectedFilterType == "Date wise"){
+                                    filterValue = 1;
+                                  } else if(selectedFilterType == "Month wise"){
+                                    filterValue = 2;
+                                  } else if(selectedFilterType == "Year wise"){
+                                    filterValue = 3;
+                                  } else {
+                                    filterValue = 4;
+                                  }
+
+                                  context.read<ExpenseBloc>().add(GetInitialExpenseEvent(filterValue: filterValue));
+                                },
+                                dropdownMenuEntries: filterType.map(
+                                  (e) {
+                                    return DropdownMenuEntry(
+                                        value: e, label: e);
+                                  },
+                                ).toList()),
                           ),
                         ),
                       ),
@@ -191,7 +214,8 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      Image.asset('assets/images/expense_app_images copy 2.tiff'),
+                      Image.asset(
+                          'assets/images/expense_app_images copy 2.tiff'),
                     ],
                   ),
                 ),
@@ -211,52 +235,71 @@ class _HomePageState extends State<HomePage> {
                 //   ),
                 // ),
                 Expanded(
-                  child: ListView.builder(itemBuilder: (_, index){
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 11),
-                      padding: EdgeInsets.all(11),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: ListView.builder(
+                    itemBuilder: (_, index) {
+                      return Container(
+                          margin: EdgeInsets.only(bottom: 11),
+                          padding: EdgeInsets.all(11),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: Column(
                             children: [
-                              Text(allData[index].title, style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
-                              Text(allData[index].bal.toString(), style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    allData[index].title,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    allData[index].bal.toString(),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              Divider(),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: allData[index].allExp.length,
+                                itemBuilder: (_, childIndex) {
+                                  return _buildExpenseItem(
+                                      AppConstants.mCat.firstWhere((element) {
+                                        return element["catId"] ==
+                                            allData[index]
+                                                .allExp[childIndex]
+                                                .expCatId;
+                                      })["catImage"],
+                                      allData[index]
+                                          .allExp[childIndex]
+                                          .expTitle,
+                                      allData[index].allExp[childIndex].expDesc,
+                                      allData[index]
+                                          .allExp[childIndex]
+                                          .expAmt
+                                          .toString());
+                                },
+                              ),
                             ],
-                          ),
-                          Divider(),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: allData[index].allExp.length,
-                            itemBuilder: (_, childIndex){
-                              return _buildExpenseItem(
-                                AppConstants.mCat.firstWhere((element){
-                                  return element["catId"] == allData[index].allExp[childIndex].expCatId;
-                                })["catImage"],
-                                  allData[index].allExp[childIndex].expTitle,
-                                  allData[index].allExp[childIndex].expDesc,
-                                  allData[index].allExp[childIndex].expAmt.toString());
-                            },
-                          ),
-                        ],
-                      )
-                    );
-                  }, itemCount: allData.length,),
+                          ));
+                    },
+                    itemCount: allData.length,
+                  ),
                 )
               ],
             ),
           );
-
         }
 
-        return  Container();
-
+        return Container();
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -281,20 +324,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildExpenseItem(String imgPath, String title, String desc, String amount) {
+  Widget _buildExpenseItem(
+      String imgPath, String title, String desc, String amount) {
     return ListTile(
       leading: Container(
-        height: 45,
-        width: 45,
-        padding: EdgeInsets.all(7),
-        child: Center(
-          child: Image.asset(imgPath),
-        ),
-        decoration: BoxDecoration(
-          color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100,
-          borderRadius: BorderRadius.circular(8),
-        )
-      ),
+          height: 45,
+          width: 45,
+          padding: EdgeInsets.all(7),
+          child: Center(
+            child: Image.asset(imgPath),
+          ),
+          decoration: BoxDecoration(
+            color: Colors
+                .primaries[Random().nextInt(Colors.primaries.length)].shade100,
+            borderRadius: BorderRadius.circular(8),
+          )),
       title: Text(
         title,
         style: TextStyle(
